@@ -398,18 +398,22 @@ function generateItem (sDisplay, oRepo) {
 
 // load repos.json file and display the list of projects from it
 window.document.addEventListener("DOMContentLoaded", function() {
-	// load data
+	// Create a timestamp or unique identifier to force reloading the JSON file
+	let timestamp = new Date().getTime();  // Current timestamp in milliseconds
+	let url = `repos.json?v=${timestamp}`;  // Append the timestamp as a query parameter to the URL
+
+	// Load data with cache-busting query parameter
 	let oXHR = new XMLHttpRequest();
-	oXHR.open("GET", "repos.json");
+	oXHR.open("GET", url);  // Use the URL with the timestamp to avoid caching
 	oXHR.onload = () => {
 		if (oXHR.status === 200) {
 			window._globals.allRepos = JSON.parse(oXHR.responseText);
 			fillLanguageFilter();
 			updateUI();
-			// show number of projects in header
+			// Show number of projects in the header
 			window.document.getElementById("count").innerText = window._globals.allRepos.length;
 		} else {
-			console.log("Request failed.	Returned status of " + oXHR.status);
+			console.log("Request failed. Returned status of " + oXHR.status);
 		}
 	};
 	oXHR.send();
