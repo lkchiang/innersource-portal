@@ -399,28 +399,28 @@ function generateItem (sDisplay, oRepo) {
 // load repos.json file and display the list of projects from it
 window.document.addEventListener("DOMContentLoaded", function() {
 	// Generate a timestamp for cache busting
-	let timestamp = new Date().getTime();
-	let url = `repos.json?v=${timestamp}`;  // Append the timestamp as a query parameter
+    let timestamp = new Date().getTime();
+    let url = `repos.json?v=${timestamp}`;  // Append the timestamp as a query parameter
 
-	// Use fetch API to load the data with cache-busting
-	fetch(url)
-		.then(response => {
-			if (response.ok) {
-				return response.json();  // Parse the JSON data
-			} else {
-				throw new Error('Request failed with status ' + response.status);
-			}
-		})
-		.then(data => {
-			window._globals.allRepos = data;
-			fillLanguageFilter();
-			updateUI();
-			// Show number of projects in the header
-			window.document.getElementById("count").innerText = window._globals.allRepos.length;
-		})
-		.catch(error => {
-			console.error("Error fetching repos.json:", error);
-		});
+    // Use fetch API with cache: "no-store" to ensure no caching
+    fetch(url, { cache: "no-store" })
+        .then(response => {
+            if (response.ok) {
+                return response.json();  // Parse the JSON data
+            } else {
+                throw new Error('Request failed with status ' + response.status);
+            }
+        })
+        .then(data => {
+            window._globals.allRepos = data;
+            fillLanguageFilter();
+            updateUI();
+            // Show number of projects in the header
+            window.document.getElementById("count").innerText = window._globals.allRepos.length;
+        })
+        .catch(error => {
+            console.error("Error fetching repos.json:", error);
+        });
 
 	// init templates
 	window._globals.templates.card = Handlebars.compile(window.document.getElementById("card-template").innerHTML);
